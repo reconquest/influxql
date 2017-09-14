@@ -142,6 +142,16 @@ var testSamples = []struct {
 		`SELECT * FROM "bar"`,
 		false,
 	},
+	{
+		Select("foo").From("bar").RetentionPolicy("week"),
+		`SELECT "foo" FROM "week"."bar"`,
+		false,
+	},
+	{
+		Select("foo").From("bar").RetentionPolicy("default"),
+		`SELECT "foo" FROM "default"."bar"`,
+		false,
+	},
 }
 
 func TestSelect(t *testing.T) {

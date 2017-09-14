@@ -36,7 +36,7 @@ const selectTemplateText = `
 			*
 		{{end}}
 	FROM
-		{{.Measurement}}
+		{{with .RetentionPolicy}}{{.}}.{{end}}{{.Measurement}}
 	{{if .Where}}
 		WHERE
 		 {{.Where | joinWithSpace }}
@@ -49,11 +49,12 @@ const selectTemplateText = `
 `
 
 type selectTemplateValues struct {
-	Measurement string
-	Fields      []string
-	Where       []string
-	GroupBy     []string
-	Fill        string
+	Measurement     string
+	RetentionPolicy string
+	Fields          []string
+	Where           []string
+	GroupBy         []string
+	Fill            string
 }
 
 func joinWithCommas(in []string) string {

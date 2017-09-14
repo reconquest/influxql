@@ -8,6 +8,7 @@ import (
 // SelectBuilder represents a SELECT statement.
 type SelectBuilder struct {
 	measurement Builder
+	retention   Builder
 	fields      []Builder
 	where       []Builder
 	groupBy     []Builder
@@ -19,18 +20,18 @@ type SelectBuilder struct {
 	fill        interface{}
 }
 
-// SelectFrom creates a SELECT query.
-func From(measurement string) *SelectBuilder {
-	s := &SelectBuilder{measurement: &literal{measurement}}
-	return s
-}
-
 // Select creates a SELECT query.
 func Select(fields ...interface{}) *SelectBuilder {
 	s := &SelectBuilder{}
 	for i := range fields {
 		s.fields = append(s.fields, &literal{fields[i]})
 	}
+	return s
+}
+
+// From creates SELECT query with specified FROM with current retention policy.
+func From(measurement string) *SelectBuilder {
+	s := &SelectBuilder{measurement: &literal{measurement}}
 	return s
 }
 
@@ -55,6 +56,14 @@ func (s *SelectBuilder) Select(fields ...interface{}) *SelectBuilder {
 // From represents the FROM in SELECT x FROM.
 func (s *SelectBuilder) From(measurement string) *SelectBuilder {
 	s.measurement = &literal{measurement}
+	return s
+}
+
+// RetentionPolicy specifies what retention policy to use for query instead of
+// default.
+func (s *SelectBuilder) RetentionPolicy(name string) *SelectBuilder {
+	s.retention = &literal{name}
+
 	return s
 }
 
@@ -152,8 +161,17 @@ func (s *SelectBuilder) Build() (string, error) {
 		}
 	}
 
+	var err error
+
+	if s.retention != nil {
+		data.RetentionPolicy, err = s.retention.Build()
+		if err != nil {
+			return "", err
+		}
+	}
+
 	buf := bytes.NewBuffer(nil)
-	err := selectTemplate.Execute(buf, data)
+	err = selectTemplate.Execute(buf, data)
 	if err != nil {
 		return "", err
 	}
