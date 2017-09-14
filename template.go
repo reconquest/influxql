@@ -143,21 +143,7 @@ func (v *value) Build() (string, error) {
 	switch t := v.v.(type) {
 	case string:
 		return fmt.Sprintf(`'%s'`, t), nil
-	case int:
-		return fmt.Sprintf("%d", t), nil
-	case uint:
-		return fmt.Sprintf("%d", t), nil
-	case int64:
-		return fmt.Sprintf("%d", t), nil
-	case uint64:
-		return fmt.Sprintf("%d", t), nil
-	case int32:
-		return fmt.Sprintf("%d", t), nil
-	case uint32:
-		return fmt.Sprintf("%d", t), nil
-	case int8:
-		return fmt.Sprintf("%d", t), nil
-	case uint8:
+	case int, uint, int64, uint64, int32, uint32, int8, uint8:
 		return fmt.Sprintf("%d", t), nil
 	case time.Time:
 		return fmt.Sprintf(`'%s'`, t.Format("2006-01-02T15:04:05Z")), nil
@@ -184,6 +170,11 @@ func (l *literal) Build() (string, error) {
 		if strings.ContainsAny(v, `".`) {
 			return fmt.Sprintf(`%s`, v), nil
 		}
+
+		if v == "*" {
+			return v, nil
+		}
+
 		return fmt.Sprintf(`%q`, v), nil
 	default:
 		return fmt.Sprintf(`"%v"`, v), nil

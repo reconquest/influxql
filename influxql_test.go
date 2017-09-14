@@ -1,9 +1,10 @@
 package influxql
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 var testSamples = []struct {
@@ -134,6 +135,11 @@ var testSamples = []struct {
 	{
 		Select(Mean("value")).From("cpu").And("region", "uswest").GroupBy(Time(time.Hour * 4)).Fill("none"),
 		`SELECT MEAN("value") FROM "cpu" WHERE "region" = 'uswest' GROUP BY time(4h) fill(none)`,
+		false,
+	},
+	{
+		Select("*").From("bar"),
+		`SELECT * FROM "bar"`,
 		false,
 	},
 }
