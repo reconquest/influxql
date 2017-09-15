@@ -177,6 +177,16 @@ var testSamples = []struct {
 		`SELECT * FROM "bar" GROUP BY "time"`,
 		false,
 	},
+	{
+		ShowTagKeys(),
+		`SHOW TAG KEYS`,
+		false,
+	},
+	{
+		ShowTagKeys().From("bar"),
+		`SHOW TAG KEYS FROM "bar"`,
+		false,
+	},
 }
 
 func TestSelect(t *testing.T) {

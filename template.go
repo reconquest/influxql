@@ -28,6 +28,15 @@ func cleanTemplate(s string) string {
 	return strings.TrimSpace(s)
 }
 
+const showTagKeysTemplateText = `
+	SHOW TAG KEYS
+	{{with .Measurement}}FROM {{.}}{{end}}
+`
+
+type showTagKeysTemplateValues struct {
+	Measurement string
+}
+
 const selectTemplateText = `
 	SELECT
 		{{with .Fields}}
@@ -81,6 +90,15 @@ var selectTemplate = template.Must(
 			"joinWithSpace":  joinWithSpace,
 		},
 	).Parse(cleanTemplate(selectTemplateText)),
+)
+
+var showTagKeysTemplate = template.Must(
+	template.New("showTagKeys").Funcs(
+		map[string]interface{}{
+			"joinWithCommas": joinWithCommas,
+			"joinWithSpace":  joinWithSpace,
+		},
+	).Parse(cleanTemplate(showTagKeysTemplateText)),
 )
 
 type keyword struct {
