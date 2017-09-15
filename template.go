@@ -30,22 +30,26 @@ func cleanTemplate(s string) string {
 
 const selectTemplateText = `
 	SELECT
-		{{if .Fields}}
-			{{.Fields | joinWithCommas}}
+		{{with .Fields}}
+			{{joinWithCommas .}}
 		{{else}}
 			*
 		{{end}}
 	FROM
 		{{with .RetentionPolicy}}{{.}}.{{end}}{{.Measurement}}
-	{{if .Where}}
+	{{with .Where}}
 		WHERE
-		 {{.Where | joinWithSpace }}
+		 {{joinWithSpace .}}
 	{{end}}
-	{{if .GroupBy}}
+	{{with .GroupBy}}
 		GROUP BY
-		 {{.GroupBy | joinWithCommas }}
+		 {{joinWithCommas .}}
 	{{end}}
-	{{if .Fill}} fill({{.Fill}}){{end}}
+	{{with .Limit}} LIMIT {{.}}{{end}}
+	{{with .Offset}} OFFSET {{.}}{{end}}
+	{{with .SLimit}} SLIMIT {{.}}{{end}}
+	{{with .SOffset}} SOFFSET {{.}}{{end}}
+	{{with .Fill}} fill({{.}}){{end}}
 `
 
 type selectTemplateValues struct {
@@ -54,7 +58,12 @@ type selectTemplateValues struct {
 	Fields          []string
 	Where           []string
 	GroupBy         []string
+	OrderBy         []string
 	Fill            string
+	Limit           int
+	Offset          int
+	SLimit          int
+	SOffset         int
 }
 
 func joinWithCommas(in []string) string {

@@ -150,6 +150,10 @@ func (s *SelectBuilder) Build() (string, error) {
 		return "", err
 	}
 
+	if err := compileArrayInto(s.orderBy, &data.OrderBy); err != nil {
+		return "", err
+	}
+
 	if s.fill != nil {
 		switch v := s.fill.(type) {
 		case nullValue:
@@ -169,6 +173,11 @@ func (s *SelectBuilder) Build() (string, error) {
 			return "", err
 		}
 	}
+
+	data.Limit = s.limit
+	data.Offset = s.offset
+	data.SLimit = s.slimit
+	data.SOffset = s.soffset
 
 	buf := bytes.NewBuffer(nil)
 	err = selectTemplate.Execute(buf, data)

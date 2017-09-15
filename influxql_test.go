@@ -152,6 +152,31 @@ var testSamples = []struct {
 		`SELECT "foo" FROM "default"."bar"`,
 		false,
 	},
+	{
+		Select("*").From("bar").Limit(1),
+		`SELECT * FROM "bar" LIMIT 1`,
+		false,
+	},
+	{
+		Select("*").From("bar").Limit(1).Offset(2),
+		`SELECT * FROM "bar" LIMIT 1 OFFSET 2`,
+		false,
+	},
+	{
+		Select("*").From("bar").SLimit(1),
+		`SELECT * FROM "bar" SLIMIT 1`,
+		false,
+	},
+	{
+		Select("*").From("bar").SLimit(1).SOffset(2),
+		`SELECT * FROM "bar" SLIMIT 1 SOFFSET 2`,
+		false,
+	},
+	{
+		Select("*").From("bar").GroupBy("time"),
+		`SELECT * FROM "bar" GROUP BY "time"`,
+		false,
+	},
 }
 
 func TestSelect(t *testing.T) {
