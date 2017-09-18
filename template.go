@@ -30,7 +30,7 @@ func cleanTemplate(s string) string {
 
 const showTagKeysTemplateText = `
 	SHOW TAG KEYS
-	{{with .Measurement}}FROM {{.}}{{end}}
+	{{- with .Measurement}} FROM {{.}}{{end}}
 `
 
 type showTagKeysTemplateValues struct {
