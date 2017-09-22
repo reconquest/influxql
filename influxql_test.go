@@ -187,6 +187,11 @@ var testSamples = []struct {
 		`SHOW TAG KEYS FROM "bar"`,
 		false,
 	},
+	{
+		ShowMeasurements(),
+		`SHOW MEASUREMENTS`,
+		false,
+	},
 }
 
 func TestSelect(t *testing.T) {

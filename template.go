@@ -37,6 +37,13 @@ type showTagKeysTemplateValues struct {
 	Measurement string
 }
 
+const showMeasurementsTemplateText = `
+	SHOW MEASUREMENTS
+`
+
+type showMeasurementsTemplateValues struct {
+}
+
 const selectTemplateText = `
 	SELECT
 		{{with .Fields}}
@@ -99,6 +106,15 @@ var showTagKeysTemplate = template.Must(
 			"joinWithSpace":  joinWithSpace,
 		},
 	).Parse(cleanTemplate(showTagKeysTemplateText)),
+)
+
+var showMeasurementsTemplate = template.Must(
+	template.New("showMeasurements").Funcs(
+		map[string]interface{}{
+			"joinWithCommas": joinWithCommas,
+			"joinWithSpace":  joinWithSpace,
+		},
+	).Parse(cleanTemplate(showMeasurementsTemplateText)),
 )
 
 type keyword struct {
