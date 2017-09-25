@@ -35,6 +35,20 @@ func From(measurement string) *SelectBuilder {
 	return s
 }
 
+func Desc(field interface{}) *order {
+	return &order{
+		field: literal{field},
+		order: "desc",
+	}
+}
+
+func Asc(field interface{}) *order {
+	return &order{
+		field: literal{field},
+		order: "asc",
+	}
+}
+
 // Fill represents FILL(x).
 func (s *SelectBuilder) Fill(v interface{}) *SelectBuilder {
 	if v == nil {

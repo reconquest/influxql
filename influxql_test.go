@@ -178,6 +178,16 @@ var testSamples = []struct {
 		false,
 	},
 	{
+		Select("*").From("bar").OrderBy("time"),
+		`SELECT * FROM "bar" ORDER BY "time"`,
+		false,
+	},
+	{
+		Select("*").From("bar").OrderBy(Desc("time")),
+		`SELECT * FROM "bar" ORDER BY "time" DESC`,
+		false,
+	},
+	{
 		ShowTagKeys(),
 		`SHOW TAG KEYS`,
 		false,

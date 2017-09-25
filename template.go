@@ -61,6 +61,10 @@ const selectTemplateText = `
 		GROUP BY
 		 {{joinWithCommas .}}
 	{{end}}
+	{{with .OrderBy}}
+		ORDER BY
+		 {{joinWithCommas .}}
+	{{end}}
 	{{with .Limit}} LIMIT {{.}}{{end}}
 	{{with .Offset}} OFFSET {{.}}{{end}}
 	{{with .SLimit}} SLIMIT {{.}}{{end}}
@@ -125,6 +129,20 @@ func (k *keyword) Build() (string, error) {
 	return k.v, nil
 }
 
+type order struct {
+	field literal
+	order string
+}
+
+func (order *order) Build() (string, error) {
+	field, err := order.field.Build()
+	if err != nil {
+		return "", err
+	}
+
+	return field + " " + strings.ToUpper(order.order), nil
+}
+
 // Expr represents an expression.
 type Expr struct {
 	expr   string
@@ -138,7 +156,11 @@ func (e *Expr) Build() (string, error) {
 	if placeholders > 0 {
 		// Where("foo = ?", "bar")
 		if placeholders != len(e.values) {
-			return "", fmt.Errorf("Mismatched number of placeholders (%d) and values (%d)", strings.Count(e.expr, placeholder), len(e.values))
+			return "", fmt.Errorf(
+				"Mismatched number of placeholders (%d) and values (%d)",
+				strings.Count(e.expr, placeholder),
+				len(e.values),
+			)
 		}
 	} else {
 		if len(e.values) > 0 {
