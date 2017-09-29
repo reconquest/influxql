@@ -41,8 +41,13 @@ const showMeasurementsTemplateText = `
 	SHOW MEASUREMENTS
 `
 
-type showMeasurementsTemplateValues struct {
-}
+type showMeasurementsTemplateValues struct{}
+
+const showRetentionPoliciesTemplateText = `
+	SHOW RETENTION POLICIES
+`
+
+type showRetentionPoliciesTemplateValues struct{}
 
 const selectTemplateText = `
 	SELECT
@@ -119,6 +124,15 @@ var showMeasurementsTemplate = template.Must(
 			"joinWithSpace":  joinWithSpace,
 		},
 	).Parse(cleanTemplate(showMeasurementsTemplateText)),
+)
+
+var showRetentionPoliciesTemplate = template.Must(
+	template.New("showRetentionPolicies").Funcs(
+		map[string]interface{}{
+			"joinWithCommas": joinWithCommas,
+			"joinWithSpace":  joinWithSpace,
+		},
+	).Parse(cleanTemplate(showRetentionPoliciesTemplateText)),
 )
 
 type keyword struct {

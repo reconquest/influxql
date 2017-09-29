@@ -202,6 +202,11 @@ var testSamples = []struct {
 		`SHOW MEASUREMENTS`,
 		false,
 	},
+	{
+		ShowRetentionPolicies(),
+		`SHOW RETENTION POLICIES`,
+		false,
+	},
 }
 
 func TestSelect(t *testing.T) {
