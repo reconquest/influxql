@@ -49,6 +49,25 @@ const showRetentionPoliciesTemplateText = `
 
 type showRetentionPoliciesTemplateValues struct{}
 
+const createRetentionPolicyTemplateText = `
+	{{if .IsAlter}}ALTER{{else}}CREATE{{end}}
+		RETENTION POLICY {{.Name}} ON {{.Database}}
+		DURATION {{.Duration}}
+		REPLICATION {{.Replication}}
+		{{with .ShardDuration}} SHARD DURATION {{.}}{{end}}
+		{{if .IsDefault}} DEFAULT{{end}}
+`
+
+type createRetentionPolicyTemplateValues struct {
+	IsAlter       bool
+	Name          string
+	Database      string
+	Duration      string
+	Replication   int
+	ShardDuration string
+	IsDefault     bool
+}
+
 const selectTemplateText = `
 	SELECT
 		{{with .Fields}}
@@ -106,6 +125,15 @@ var selectTemplate = template.Must(
 			"joinWithSpace":  joinWithSpace,
 		},
 	).Parse(cleanTemplate(selectTemplateText)),
+)
+
+var createRetentionPolicyTemplate = template.Must(
+	template.New("createRetentionPolicy").Funcs(
+		map[string]interface{}{
+			"joinWithCommas": joinWithCommas,
+			"joinWithSpace":  joinWithSpace,
+		},
+	).Parse(cleanTemplate(createRetentionPolicyTemplateText)),
 )
 
 var showTagKeysTemplate = template.Must(

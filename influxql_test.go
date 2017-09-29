@@ -207,6 +207,26 @@ var testSamples = []struct {
 		`SHOW RETENTION POLICIES`,
 		false,
 	},
+	{
+		CreateRetentionPolicy("name", "db", time.Hour, 1),
+		`CREATE RETENTION POLICY "name" ON "db" DURATION 1h REPLICATION 1`,
+		false,
+	},
+	{
+		CreateRetentionPolicy("name", "db", time.Hour, 1).Alter(),
+		`ALTER RETENTION POLICY "name" ON "db" DURATION 1h REPLICATION 1`,
+		false,
+	},
+	{
+		CreateRetentionPolicy("name", "db", time.Hour, 1).ShardDuration(time.Minute),
+		`CREATE RETENTION POLICY "name" ON "db" DURATION 1h REPLICATION 1 SHARD DURATION 1m`,
+		false,
+	},
+	{
+		CreateRetentionPolicy("name", "db", time.Hour, 1).Default(),
+		`CREATE RETENTION POLICY "name" ON "db" DURATION 1h REPLICATION 1 DEFAULT`,
+		false,
+	},
 }
 
 func TestSelect(t *testing.T) {
