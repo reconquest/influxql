@@ -2,11 +2,13 @@ package influxql
 
 import (
 	"bytes"
+	"errors"
 )
 
 // ShowTagKeys represents a SHOW TAG KEYS statement.
 type ShowTagKeysBuilder struct {
 	measurement Builder
+	rp          Builder
 }
 
 // ShowTagKeys creates a SHOW query.
@@ -20,6 +22,12 @@ func (s *ShowTagKeysBuilder) From(measurement string) *ShowTagKeysBuilder {
 	return s
 }
 
+// RetentionPolicy represents a retention policy part of FROM statement.
+func (s *ShowTagKeysBuilder) RetentionPolicy(rp string) *ShowTagKeysBuilder {
+	s.rp = &literal{rp}
+	return s
+}
+
 // Build satisfies Builder.
 func (s *ShowTagKeysBuilder) Build() (string, error) {
 	data := showTagKeysTemplateValues{}
@@ -27,6 +35,18 @@ func (s *ShowTagKeysBuilder) Build() (string, error) {
 	if s.measurement != nil {
 		if err := compileInto(s.measurement, &data.Measurement); err != nil {
 			return "", err
+		}
+	}
+
+	if s.rp != nil {
+		if err := compileInto(s.rp, &data.RetentionPolicy); err != nil {
+			return "", err
+		}
+
+		if s.measurement == nil {
+			return "", errors.New(
+				"retention policy specified, but measurement was not specified",
+			)
 		}
 	}
 
