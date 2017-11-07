@@ -1,4 +1,4 @@
-package influxql
+package influxql // import "github.com/reconquest/influxql"
 
 import (
 	"testing"
