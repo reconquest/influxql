@@ -113,6 +113,20 @@ type selectTemplateValues struct {
 	SOffset         int
 }
 
+const deleteTemplateText = `
+	DELETE FROM
+		{{.Measurement}}
+	{{with .Where}}
+		WHERE
+		 {{joinWithSpace .}}
+	{{end}}
+`
+
+type deleteTemplateValues struct {
+	Measurement string
+	Where       []string
+}
+
 func joinWithCommas(in []string) string {
 	return strings.Join(in, ", ")
 }
@@ -121,49 +135,39 @@ func joinWithSpace(in []string) string {
 	return strings.Join(in, " ")
 }
 
+var templateFuncs = map[string]interface{}{
+	"joinWithCommas": joinWithCommas,
+	"joinWithSpace":  joinWithSpace,
+}
+
 var selectTemplate = template.Must(
-	template.New("select").Funcs(
-		map[string]interface{}{
-			"joinWithCommas": joinWithCommas,
-			"joinWithSpace":  joinWithSpace,
-		},
-	).Parse(cleanTemplate(selectTemplateText)),
+	template.New("select").Funcs(templateFuncs).
+		Parse(cleanTemplate(selectTemplateText)),
+)
+
+var deleteTemplate = template.Must(
+	template.New("delete").Funcs(templateFuncs).
+		Parse(cleanTemplate(deleteTemplateText)),
 )
 
 var createRetentionPolicyTemplate = template.Must(
-	template.New("createRetentionPolicy").Funcs(
-		map[string]interface{}{
-			"joinWithCommas": joinWithCommas,
-			"joinWithSpace":  joinWithSpace,
-		},
-	).Parse(cleanTemplate(createRetentionPolicyTemplateText)),
+	template.New("createRetentionPolicy").Funcs(templateFuncs).
+		Parse(cleanTemplate(createRetentionPolicyTemplateText)),
 )
 
 var showTagKeysTemplate = template.Must(
-	template.New("showTagKeys").Funcs(
-		map[string]interface{}{
-			"joinWithCommas": joinWithCommas,
-			"joinWithSpace":  joinWithSpace,
-		},
-	).Parse(cleanTemplate(showTagKeysTemplateText)),
+	template.New("showTagKeys").Funcs(templateFuncs).
+		Parse(cleanTemplate(showTagKeysTemplateText)),
 )
 
 var showMeasurementsTemplate = template.Must(
-	template.New("showMeasurements").Funcs(
-		map[string]interface{}{
-			"joinWithCommas": joinWithCommas,
-			"joinWithSpace":  joinWithSpace,
-		},
-	).Parse(cleanTemplate(showMeasurementsTemplateText)),
+	template.New("showMeasurements").Funcs(templateFuncs).
+		Parse(cleanTemplate(showMeasurementsTemplateText)),
 )
 
 var showRetentionPoliciesTemplate = template.Must(
-	template.New("showRetentionPolicies").Funcs(
-		map[string]interface{}{
-			"joinWithCommas": joinWithCommas,
-			"joinWithSpace":  joinWithSpace,
-		},
-	).Parse(cleanTemplate(showRetentionPoliciesTemplateText)),
+	template.New("showRetentionPolicies").Funcs(templateFuncs).
+		Parse(cleanTemplate(showRetentionPoliciesTemplateText)),
 )
 
 type keyword struct {
