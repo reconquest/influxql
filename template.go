@@ -28,6 +28,18 @@ func cleanTemplate(s string) string {
 	return strings.TrimSpace(s)
 }
 
+const showFieldKeysTemplateText = `
+	SHOW FIELD KEYS
+	{{- if or .Measurement .RetentionPolicy}} FROM {{end}}
+	{{- with .RetentionPolicy}}{{.}}.{{end}}
+	{{- with .Measurement }}{{.}}{{end}}
+`
+
+type showFieldKeysTemplateValues struct {
+	Measurement     string
+	RetentionPolicy string
+}
+
 const showTagKeysTemplateText = `
 	SHOW TAG KEYS
 	{{- if or .Measurement .RetentionPolicy}} FROM {{end}}
@@ -153,6 +165,11 @@ var deleteTemplate = template.Must(
 var createRetentionPolicyTemplate = template.Must(
 	template.New("createRetentionPolicy").Funcs(templateFuncs).
 		Parse(cleanTemplate(createRetentionPolicyTemplateText)),
+)
+
+var showFieldKeysTemplate = template.Must(
+	template.New("showFieldKeys").Funcs(templateFuncs).
+		Parse(cleanTemplate(showFieldKeysTemplateText)),
 )
 
 var showTagKeysTemplate = template.Must(
