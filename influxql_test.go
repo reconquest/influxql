@@ -227,6 +227,11 @@ var testSamples = []struct {
 		`CREATE RETENTION POLICY "name" ON "db" DURATION 1h REPLICATION 1 DEFAULT`,
 		false,
 	},
+	{
+		CreateDatabase("name"),
+		`CREATE DATABASE "name"`,
+		false,
+	},
 }
 
 func TestSelect(t *testing.T) {

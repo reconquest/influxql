@@ -52,6 +52,14 @@ type showTagKeysTemplateValues struct {
 	RetentionPolicy string
 }
 
+const createDatabaseTemplateText = `
+	CREATE DATABASE {{.Database}}
+`
+
+type createDatabaseTemplateValues struct {
+	Database string
+}
+
 const showMeasurementsTemplateText = `
 	SHOW MEASUREMENTS
 `
@@ -180,6 +188,11 @@ var showTagKeysTemplate = template.Must(
 var showMeasurementsTemplate = template.Must(
 	template.New("showMeasurements").Funcs(templateFuncs).
 		Parse(cleanTemplate(showMeasurementsTemplateText)),
+)
+
+var createDatabaseTemplate = template.Must(
+	template.New("createDatabase").Funcs(templateFuncs).
+		Parse(cleanTemplate(createDatabaseTemplateText)),
 )
 
 var showRetentionPoliciesTemplate = template.Must(
